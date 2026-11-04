@@ -1,6 +1,7 @@
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.format.DateTimeParseException;
 
 public class GestorSolicitudes {
     private List<Solicitud> solicitudes = new ArrayList<>();
@@ -11,28 +12,25 @@ public class GestorSolicitudes {
         responsables.add(new Responsable(nombre, area));
     }
 
-    // Retorna el id si salió bien, o un código de error negativo
+    // Retorna el id de la solicitud registrada; lanza SolicitudException si los datos son inválidos
     public int registrarSolicitud(int id, String legajo, String nombreEstudiante, String email,
                                   String tipo, String prioridad, String descripcion, String fecha) {
         if (legajo == null || legajo.equals("")) {
-            return -1;
+            throw new SolicitudException("El legajo es obligatorio");
         }
         if (email == null || email.indexOf("@") == -1) {
-            return -2;
+            throw new SolicitudException("Email inválido: " + email);
         }
-        if (tipo.equals("CONSTANCIA") || tipo.equals("EQUIVALENCIA") || tipo.equals("BECA") || tipo.equals("OTRO")) {
-            // tipo válido
-        } else {
-            return -3;
+        if (!(tipo.equals("CONSTANCIA") || tipo.equals("EQUIVALENCIA") || tipo.equals("BECA") || tipo.equals("OTRO"))) {
+            throw new SolicitudException("Tipo inválido: " + tipo);
         }
-        if (prioridad.equals("ALTA") || prioridad.equals("MEDIA") || prioridad.equals("BAJA")) {
-            // prioridad válida
-        } else {
-            return -4;
+        if (!(prioridad.equals("ALTA") || prioridad.equals("MEDIA") || prioridad.equals("BAJA"))) {
+            throw new SolicitudException("Prioridad inválida: " + prioridad);
         }
         try {
             LocalDate.parse(fecha);
-        } catch (Exception e) {
+        } catch (DateTimeParseException e) {
+            throw new SolicitudException("Fecha inválida: " + fecha);
         }
         Estudiante estudiante = null;
         for (Estudiante e : estudiantes) {
@@ -48,38 +46,39 @@ public class GestorSolicitudes {
         return id;
     }
 
-    public boolean cambiarEstado(int id, String nuevoEstado) {
+    public void cambiarEstado(int id, String nuevoEstado) {
         for (Solicitud s : solicitudes) {
             if (s.getId() == id) {
                 if (s.getEstado().equals("PENDIENTE")) {
                     if (nuevoEstado.equals("EN_PROCESO")) {
                         s.setEstado(nuevoEstado);
-                        return true;
+                        return;
                     }
                 } else if (s.getEstado().equals("EN_PROCESO")) {
                     if (nuevoEstado.equals("RESUELTA") || nuevoEstado.equals("RECHAZADA")) {
                         s.setEstado(nuevoEstado);
-                        return true;
+                        return;
                     }
                 }
-                return false;
+                throw new SolicitudException("Transición no permitida: " + s.getEstado() + " -> " + nuevoEstado);
             }
         }
-        return false;
+        throw new SolicitudException("No existe la solicitud " + id);
     }
 
-    public boolean asignarResponsable(int id, String nombreResponsable) {
+    public void asignarResponsable(int id, String nombreResponsable) {
         for (Solicitud s : solicitudes) {
             if (s.getId() == id) {
                 for (Responsable r : responsables) {
                     if (r.getNombre().equals(nombreResponsable)) {
                         s.setResponsable(r);
-                        return true;
+                        return;
                     }
                 }
+                throw new SolicitudException("No existe el responsable " + nombreResponsable);
             }
         }
-        return false;
+        throw new SolicitudException("No existe la solicitud " + id);
     }
 
     public List<Solicitud> buscarPorEstado(String estado) {
