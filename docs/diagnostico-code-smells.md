@@ -1,0 +1,13 @@
+# Tabla de diagnóstico (Etapa 3)
+
+| # | Smell / debilidad | Ubicación | Evidencia | Impacto | Riesgo de mantenimiento | Prioridad |
+|---|---|---|---|---|---|---|
+| 1 | Catch vacío | `GestorSolicitudes.registrarSolicitud` | `try { LocalDate.parse(fecha); } catch (Exception e) { }` | Una fecha inválida se registra sin error (se comprobó con "abc") | Fallas silenciosas y datos corruptos | Alta |
+| 2 | Códigos de error en vez de excepciones | `registrarSolicitud` (-1 a -4); `cambiarEstado` y `asignarResponsable` (false) | `return -2;`, `return false;` | El llamador no sabe qué falló (el mismo false para dos causas distintas) | Cada nuevo error exige otro código que hay que recordar | Alta |
+| 3 | Obsesión por primitivos | `Solicitud` (tipo, prioridad, estado, email como String) | `private String estado;` y comparaciones con "PENDIENTE", "ALTA", "BECA" repetidas | Un valor mal escrito compila y falla en ejecución | Agregar un estado o tipo exige editar varios métodos | Alta |
+| 4 | Clase gigante | `GestorSolicitudes` | Una clase con registro, validación, búsqueda, asignación y reporte | Baja cohesión, difícil de leer y probar | Cualquier cambio toca la misma clase (viola SRP) | Alta |
+| 5 | Método largo | `registrarSolicitud` | Valida legajo, email, tipo, prioridad y fecha, busca o crea estudiante y registra, todo en un método | Difícil de leer y de probar por partes | Un cambio en una regla puede romper otra | Media |
+| 6 | Demasiados parámetros | `registrarSolicitud` | 8 parámetros: `(int id, String legajo, String nombreEstudiante, String email, String tipo, String prioridad, String descripcion, String fecha)` | Fácil confundir el orden de los Strings | Agregar un dato obliga a cambiar la firma y todas las llamadas | Media |
+| 7 | Código duplicado | `buscarPorEstado`, `buscarPorPrioridad`, `buscarPorTipo` | Tres métodos con el mismo bucle y solo cambia el campo | Una corrección se hace tres veces | Inconsistencias si se cambia uno solo (viola DRY) | Media |
+| 8 | Lógica mezclada con presentación | `listarReporte` | Cuenta estados y a la vez imprime con `System.out` | No se puede probar el reporte sin capturar la consola | Cambiar el formato obliga a tocar la lógica de conteo | Media |
+| 9 | Reglas del dominio fuera de las entidades | `cambiarEstado` (ifs anidados con las transiciones) | Las transiciones permitidas viven en el gestor; `Solicitud` solo guarda datos | Un nuevo estado obliga a tocar `cambiarEstado` y los contadores de `listarReporte` | Rigidez: un cambio chico produce una cascada (viola OCP) | Media |
