@@ -43,6 +43,10 @@ public class Solicitud {
         this.estado = EstadoSolicitud.valueOf(estado);
     }
 
+    public boolean permiteTransicion(String nuevoEstado) {
+        return estado.permiteTransicion(nuevoEstado);
+    }
+
     public String getDescripcion() {
         return descripcion;
     }

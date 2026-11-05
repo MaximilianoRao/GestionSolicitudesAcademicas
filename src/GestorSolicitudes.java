@@ -73,20 +73,18 @@ public class GestorSolicitudes {
     public void cambiarEstado(int id, String nuevoEstado) {
         for (Solicitud s : solicitudes) {
             if (s.getId() == id) {
-                if (s.getEstado().equals("PENDIENTE")) {
-                    if (nuevoEstado.equals("EN_PROCESO")) {
-                        s.setEstado(nuevoEstado);
-                        return;
-                    }
-                } else if (s.getEstado().equals("EN_PROCESO")) {
-                    if (nuevoEstado.equals("RESUELTA") || nuevoEstado.equals("RECHAZADA")) {
-                        s.setEstado(nuevoEstado);
-                        return;
-                    }
+                if (s.permiteTransicion(nuevoEstado)) {
+                    s.setEstado(nuevoEstado);
+                    return;
                 }
-                throw new SolicitudException("Transición no permitida: " + s.getEstado() + " -> " + nuevoEstado);
+
+                throw new SolicitudException(
+                        "Transición no permitida: "
+                        + s.getEstado() + " -> " + nuevoEstado
+                );
             }
         }
+
         throw new SolicitudException("No existe la solicitud " + id);
     }
 
