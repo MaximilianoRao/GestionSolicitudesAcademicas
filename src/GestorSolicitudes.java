@@ -5,9 +5,13 @@ import java.time.format.DateTimeParseException;
 import java.util.function.Predicate;
 
 public class GestorSolicitudes {
-    private List<Solicitud> solicitudes = new ArrayList<>();
+    private RepositorioSolicitudes repositorio;
     private List<Estudiante> estudiantes = new ArrayList<>();
     private List<Responsable> responsables = new ArrayList<>();
+
+    public GestorSolicitudes(RepositorioSolicitudes repositorio) {
+        this.repositorio = repositorio;
+    }
 
     public void agregarResponsable(String nombre, String area) {
         responsables.add(new Responsable(nombre, area));
@@ -36,7 +40,7 @@ public class GestorSolicitudes {
             estudiantes.add(estudiante);
         }
 
-        solicitudes.add(new Solicitud(
+        repositorio.agregar(new Solicitud(
                 id, estudiante, tipo, prioridad, descripcion, fecha
         ));
 
@@ -69,42 +73,44 @@ public class GestorSolicitudes {
     }
 
     public void cambiarEstado(int id, EstadoSolicitud nuevoEstado) {
-        for (Solicitud s : solicitudes) {
-            if (s.getId() == id) {
-                if (s.permiteTransicion(nuevoEstado)) {
-                    s.setEstado(nuevoEstado);
-                    return;
-                }
+        Solicitud solicitud = buscarSolicitud(id);
 
-                throw new SolicitudException(
-                        "Transición no permitida: "
-                        + s.getEstado() + " -> " + nuevoEstado
-                );
-            }
+        if (!solicitud.permiteTransicion(nuevoEstado)) {
+            throw new SolicitudException(
+                    "Transición no permitida: "
+                    + solicitud.getEstado() + " -> " + nuevoEstado
+            );
         }
 
-        throw new SolicitudException("No existe la solicitud " + id);
+        solicitud.setEstado(nuevoEstado);
     }
 
     public void asignarResponsable(int id, String nombreResponsable) {
-        for (Solicitud s : solicitudes) {
-            if (s.getId() == id) {
-                for (Responsable r : responsables) {
-                    if (r.getNombre().equals(nombreResponsable)) {
-                        s.setResponsable(r);
-                        return;
-                    }
-                }
-                throw new SolicitudException("No existe el responsable " + nombreResponsable);
+        Solicitud solicitud = buscarSolicitud(id);
+
+        for (Responsable r : responsables) {
+            if (r.getNombre().equals(nombreResponsable)) {
+                solicitud.setResponsable(r);
+                return;
             }
         }
-        throw new SolicitudException("No existe la solicitud " + id);
+
+        throw new SolicitudException("No existe el responsable " + nombreResponsable);
+    }
+
+    public List<Solicitud> listarSolicitudes() {
+        return repositorio.listarTodas();
+    }
+
+    private Solicitud buscarSolicitud(int id) {
+        return repositorio.buscarPorId(id)
+                .orElseThrow(() -> new SolicitudException("No existe la solicitud " + id));
     }
 
     private List<Solicitud> filtrarSolicitudes(Predicate<Solicitud> criterio) {
         List<Solicitud> resultado = new ArrayList<>();
 
-        for (Solicitud solicitud : solicitudes) {
+        for (Solicitud solicitud : repositorio.listarTodas()) {
             if (criterio.test(solicitud)) {
                 resultado.add(solicitud);
             }
@@ -129,24 +135,5 @@ public class GestorSolicitudes {
         return filtrarSolicitudes(
                 solicitud -> solicitud.getTipo() == tipo
         );
-    }
-
-    public void listarReporte() {
-        int pendientes = 0, enProceso = 0, resueltas = 0, rechazadas = 0;
-        System.out.println("=== REPORTE DE SOLICITUDES ===");
-        for (Solicitud s : solicitudes) {
-            String resp = "sin asignar";
-            if (s.getResponsable() != null) {
-                resp = s.getResponsable().getNombre();
-            }
-            System.out.println(s.getId() + " | " + s.getEstudiante().getNombre() + " | " + s.getTipo()
-                    + " | " + s.getPrioridad() + " | " + s.getEstado() + " | " + resp);
-            if (s.getEstado() == EstadoSolicitud.PENDIENTE) pendientes++;
-            if (s.getEstado() == EstadoSolicitud.EN_PROCESO) enProceso++;
-            if (s.getEstado() == EstadoSolicitud.RESUELTA) resueltas++;
-            if (s.getEstado() == EstadoSolicitud.RECHAZADA) rechazadas++;
-        }
-        System.out.println("Pendientes: " + pendientes + " | En proceso: " + enProceso
-                + " | Resueltas: " + resueltas + " | Rechazadas: " + rechazadas);
     }
 }

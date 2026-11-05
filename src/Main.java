@@ -2,7 +2,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        GestorSolicitudes gestor = new GestorSolicitudes();
+        GestorSolicitudes gestor = new GestorSolicitudes(new RepositorioSolicitudesMemoria());
         gestor.agregarResponsable("Laura Gomez", "Alumnado");
         gestor.agregarResponsable("Carlos Perez", "Becas");
 
@@ -43,7 +43,7 @@ public class Main {
         System.out.println("Solicitudes ALTA: " + altas.size());
         System.out.println("Solicitudes PENDIENTE: " + gestor.buscarPorEstado(EstadoSolicitud.PENDIENTE).size());
         System.out.println("Solicitudes BECA: " + gestor.buscarPorTipo(TipoSolicitud.BECA).size());
-        gestor.listarReporte();
+        System.out.println(new ReporteSolicitudes().generar(gestor.listarSolicitudes()));
     }
 
     private static void ejecutar(String descripcion, Runnable accion) {
