@@ -38,7 +38,7 @@ ejecutar("Registro con email invalido", () -> gestor.registrarSolicitud(
         List<Solicitud> altas = gestor.buscarPorPrioridad("ALTA");
         System.out.println("Solicitudes ALTA: " + altas.size());
         System.out.println("Solicitudes PENDIENTE: " + gestor.buscarPorEstado("PENDIENTE").size());
-
+        System.out.println("Solicitudes BECA: " + gestor.buscarPorTipo("BECA").size());
         gestor.listarReporte();
     }
 
