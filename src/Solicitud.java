@@ -8,12 +8,12 @@ public class Solicitud {
     private String fecha;
     private Responsable responsable;
 
-    public Solicitud(int id, Estudiante estudiante, String tipo, String prioridad,
+    public Solicitud(int id, Estudiante estudiante, TipoSolicitud tipo, PrioridadSolicitud prioridad,
                      String descripcion, String fecha) {
         this.id = id;
         this.estudiante = estudiante;
-        this.tipo = TipoSolicitud.valueOf(tipo);
-        this.prioridad = PrioridadSolicitud.valueOf(prioridad);
+        this.tipo = tipo;
+        this.prioridad = prioridad;
         this.estado = EstadoSolicitud.PENDIENTE;
         this.descripcion = descripcion;
         this.fecha = fecha;
@@ -27,23 +27,23 @@ public class Solicitud {
         return estudiante;
     }
 
-    public String getTipo() {
-        return tipo.name();
+    public TipoSolicitud getTipo() {
+        return tipo;
     }
 
-    public String getPrioridad() {
-        return prioridad.name();
+    public PrioridadSolicitud getPrioridad() {
+        return prioridad;
     }
 
-    public String getEstado() {
-        return estado.name();
+    public EstadoSolicitud getEstado() {
+        return estado;
     }
 
-    public void setEstado(String estado) {
-        this.estado = EstadoSolicitud.valueOf(estado);
+    public void setEstado(EstadoSolicitud estado) {
+        this.estado = estado;
     }
 
-    public boolean permiteTransicion(String nuevoEstado) {
+    public boolean permiteTransicion(EstadoSolicitud nuevoEstado) {
         return estado.permiteTransicion(nuevoEstado);
     }
 

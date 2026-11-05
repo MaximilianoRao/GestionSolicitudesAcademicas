@@ -4,14 +4,13 @@ public enum EstadoSolicitud {
     RESUELTA,
     RECHAZADA;
 
-    public boolean permiteTransicion(String nuevoEstado) {
+    public boolean permiteTransicion(EstadoSolicitud nuevoEstado) {
         if (this == PENDIENTE) {
-            return nuevoEstado.equals("EN_PROCESO");
+            return nuevoEstado == EN_PROCESO;
         }
 
         if (this == EN_PROCESO) {
-            return nuevoEstado.equals("RESUELTA")
-                    || nuevoEstado.equals("RECHAZADA");
+            return nuevoEstado == RESUELTA || nuevoEstado == RECHAZADA;
         }
 
         return false;

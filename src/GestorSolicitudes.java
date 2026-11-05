@@ -15,7 +15,7 @@ public class GestorSolicitudes {
 
     // Registra la solicitud o lanza SolicitudException si los datos son inválidos.
     public int registrarSolicitud(int id, DatosEstudiante datosEstudiante,
-                                  String tipo, String prioridad,
+                                  TipoSolicitud tipo, PrioridadSolicitud prioridad,
                                   String descripcion, String fecha) {
         String legajo = datosEstudiante.getLegajo();
         String nombreEstudiante = datosEstudiante.getNombre();
@@ -43,8 +43,8 @@ public class GestorSolicitudes {
         return id;
     }
 
-    private void validarDatosSolicitud(String legajo, String email, String tipo,
-                                       String prioridad, String fecha) {
+    private void validarDatosSolicitud(String legajo, String email, TipoSolicitud tipo,
+                                       PrioridadSolicitud prioridad, String fecha) {
         if (legajo == null || legajo.equals("")) {
             throw new SolicitudException("El legajo es obligatorio");
         }
@@ -53,14 +53,12 @@ public class GestorSolicitudes {
             throw new SolicitudException("Email inválido: " + email);
         }
 
-        if (!(tipo.equals("CONSTANCIA") || tipo.equals("EQUIVALENCIA")
-                || tipo.equals("BECA") || tipo.equals("OTRO"))) {
-            throw new SolicitudException("Tipo inválido: " + tipo);
+        if (tipo == null) {
+            throw new SolicitudException("El tipo es obligatorio");
         }
 
-        if (!(prioridad.equals("ALTA") || prioridad.equals("MEDIA")
-                || prioridad.equals("BAJA"))) {
-            throw new SolicitudException("Prioridad inválida: " + prioridad);
+        if (prioridad == null) {
+            throw new SolicitudException("La prioridad es obligatoria");
         }
 
         try {
@@ -70,7 +68,7 @@ public class GestorSolicitudes {
         }
     }
 
-    public void cambiarEstado(int id, String nuevoEstado) {
+    public void cambiarEstado(int id, EstadoSolicitud nuevoEstado) {
         for (Solicitud s : solicitudes) {
             if (s.getId() == id) {
                 if (s.permiteTransicion(nuevoEstado)) {
@@ -115,21 +113,21 @@ public class GestorSolicitudes {
         return resultado;
     }
 
-    public List<Solicitud> buscarPorEstado(String estado) {
+    public List<Solicitud> buscarPorEstado(EstadoSolicitud estado) {
         return filtrarSolicitudes(
-                solicitud -> solicitud.getEstado().equals(estado)
+                solicitud -> solicitud.getEstado() == estado
         );
     }
 
-    public List<Solicitud> buscarPorPrioridad(String prioridad) {
+    public List<Solicitud> buscarPorPrioridad(PrioridadSolicitud prioridad) {
         return filtrarSolicitudes(
-                solicitud -> solicitud.getPrioridad().equals(prioridad)
+                solicitud -> solicitud.getPrioridad() == prioridad
         );
     }
 
-    public List<Solicitud> buscarPorTipo(String tipo) {
+    public List<Solicitud> buscarPorTipo(TipoSolicitud tipo) {
         return filtrarSolicitudes(
-                solicitud -> solicitud.getTipo().equals(tipo)
+                solicitud -> solicitud.getTipo() == tipo
         );
     }
 
@@ -143,10 +141,10 @@ public class GestorSolicitudes {
             }
             System.out.println(s.getId() + " | " + s.getEstudiante().getNombre() + " | " + s.getTipo()
                     + " | " + s.getPrioridad() + " | " + s.getEstado() + " | " + resp);
-            if (s.getEstado().equals("PENDIENTE")) pendientes++;
-            if (s.getEstado().equals("EN_PROCESO")) enProceso++;
-            if (s.getEstado().equals("RESUELTA")) resueltas++;
-            if (s.getEstado().equals("RECHAZADA")) rechazadas++;
+            if (s.getEstado() == EstadoSolicitud.PENDIENTE) pendientes++;
+            if (s.getEstado() == EstadoSolicitud.EN_PROCESO) enProceso++;
+            if (s.getEstado() == EstadoSolicitud.RESUELTA) resueltas++;
+            if (s.getEstado() == EstadoSolicitud.RECHAZADA) rechazadas++;
         }
         System.out.println("Pendientes: " + pendientes + " | En proceso: " + enProceso
                 + " | Resueltas: " + resueltas + " | Rechazadas: " + rechazadas);
