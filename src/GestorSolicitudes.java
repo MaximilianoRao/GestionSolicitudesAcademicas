@@ -20,6 +20,29 @@ public int registrarSolicitud(int id, DatosEstudiante datosEstudiante,
     String nombreEstudiante = datosEstudiante.getNombre();
     String email = datosEstudiante.getEmail();
 
+    validarDatosSolicitud(legajo, email, tipo, prioridad, fecha);
+
+    Estudiante estudiante = null;
+
+    for (Estudiante e : estudiantes) {
+        if (e.getLegajo().equals(legajo)) {
+            estudiante = e;
+        }
+    }
+
+    if (estudiante == null) {
+        estudiante = new Estudiante(legajo, nombreEstudiante, email);
+        estudiantes.add(estudiante);
+    }
+
+    solicitudes.add(new Solicitud(
+            id, estudiante, tipo, prioridad, descripcion, fecha
+    ));
+
+    return id;
+}
+private void validarDatosSolicitud(String legajo, String email, String tipo,
+                                   String prioridad, String fecha) {
     if (legajo == null || legajo.equals("")) {
         throw new SolicitudException("El legajo es obligatorio");
     }
@@ -43,25 +66,6 @@ public int registrarSolicitud(int id, DatosEstudiante datosEstudiante,
     } catch (DateTimeParseException e) {
         throw new SolicitudException("Fecha inválida: " + fecha);
     }
-
-    Estudiante estudiante = null;
-
-    for (Estudiante e : estudiantes) {
-        if (e.getLegajo().equals(legajo)) {
-            estudiante = e;
-        }
-    }
-
-    if (estudiante == null) {
-        estudiante = new Estudiante(legajo, nombreEstudiante, email);
-        estudiantes.add(estudiante);
-    }
-
-    solicitudes.add(new Solicitud(
-            id, estudiante, tipo, prioridad, descripcion, fecha
-    ));
-
-    return id;
 }
 
     public void cambiarEstado(int id, String nuevoEstado) {
