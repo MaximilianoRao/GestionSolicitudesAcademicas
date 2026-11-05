@@ -12,39 +12,57 @@ public class GestorSolicitudes {
         responsables.add(new Responsable(nombre, area));
     }
 
-    // Retorna el id de la solicitud registrada; lanza SolicitudException si los datos son inválidos
-    public int registrarSolicitud(int id, String legajo, String nombreEstudiante, String email,
-                                  String tipo, String prioridad, String descripcion, String fecha) {
-        if (legajo == null || legajo.equals("")) {
-            throw new SolicitudException("El legajo es obligatorio");
-        }
-        if (email == null || email.indexOf("@") == -1) {
-            throw new SolicitudException("Email inválido: " + email);
-        }
-        if (!(tipo.equals("CONSTANCIA") || tipo.equals("EQUIVALENCIA") || tipo.equals("BECA") || tipo.equals("OTRO"))) {
-            throw new SolicitudException("Tipo inválido: " + tipo);
-        }
-        if (!(prioridad.equals("ALTA") || prioridad.equals("MEDIA") || prioridad.equals("BAJA"))) {
-            throw new SolicitudException("Prioridad inválida: " + prioridad);
-        }
-        try {
-            LocalDate.parse(fecha);
-        } catch (DateTimeParseException e) {
-            throw new SolicitudException("Fecha inválida: " + fecha);
-        }
-        Estudiante estudiante = null;
-        for (Estudiante e : estudiantes) {
-            if (e.getLegajo().equals(legajo)) {
-                estudiante = e;
-            }
-        }
-        if (estudiante == null) {
-            estudiante = new Estudiante(legajo, nombreEstudiante, email);
-            estudiantes.add(estudiante);
-        }
-        solicitudes.add(new Solicitud(id, estudiante, tipo, prioridad, descripcion, fecha));
-        return id;
+// Registra la solicitud o lanza SolicitudException si los datos son inválidos.
+public int registrarSolicitud(int id, DatosEstudiante datosEstudiante,
+                              String tipo, String prioridad,
+                              String descripcion, String fecha) {
+    String legajo = datosEstudiante.getLegajo();
+    String nombreEstudiante = datosEstudiante.getNombre();
+    String email = datosEstudiante.getEmail();
+
+    if (legajo == null || legajo.equals("")) {
+        throw new SolicitudException("El legajo es obligatorio");
     }
+
+    if (email == null || email.indexOf("@") == -1) {
+        throw new SolicitudException("Email inválido: " + email);
+    }
+
+    if (!(tipo.equals("CONSTANCIA") || tipo.equals("EQUIVALENCIA")
+            || tipo.equals("BECA") || tipo.equals("OTRO"))) {
+        throw new SolicitudException("Tipo inválido: " + tipo);
+    }
+
+    if (!(prioridad.equals("ALTA") || prioridad.equals("MEDIA")
+            || prioridad.equals("BAJA"))) {
+        throw new SolicitudException("Prioridad inválida: " + prioridad);
+    }
+
+    try {
+        LocalDate.parse(fecha);
+    } catch (DateTimeParseException e) {
+        throw new SolicitudException("Fecha inválida: " + fecha);
+    }
+
+    Estudiante estudiante = null;
+
+    for (Estudiante e : estudiantes) {
+        if (e.getLegajo().equals(legajo)) {
+            estudiante = e;
+        }
+    }
+
+    if (estudiante == null) {
+        estudiante = new Estudiante(legajo, nombreEstudiante, email);
+        estudiantes.add(estudiante);
+    }
+
+    solicitudes.add(new Solicitud(
+            id, estudiante, tipo, prioridad, descripcion, fecha
+    ));
+
+    return id;
+}
 
     public void cambiarEstado(int id, String nuevoEstado) {
         for (Solicitud s : solicitudes) {

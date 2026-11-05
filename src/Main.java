@@ -6,10 +6,29 @@ public class Main {
         gestor.agregarResponsable("Laura Gomez", "Alumnado");
         gestor.agregarResponsable("Carlos Perez", "Becas");
 
-        ejecutar("Registro 1", () -> gestor.registrarSolicitud(1, "L001", "Ana Lopez", "ana@mail.com", "CONSTANCIA", "BAJA", "Constancia de alumno regular", "2026-11-03"));
-        ejecutar("Registro 2", () -> gestor.registrarSolicitud(2, "L002", "Juan Diaz", "juan@mail.com", "BECA", "ALTA", "Solicitud de beca", "2026-11-03"));
-        ejecutar("Registro 3", () -> gestor.registrarSolicitud(3, "L001", "Ana Lopez", "ana@mail.com", "EQUIVALENCIA", "MEDIA", "Equivalencia de materia", "2026-11-04"));
-        ejecutar("Registro con email invalido", () -> gestor.registrarSolicitud(4, "L003", "Pedro Ruiz", "pedro.mail.com", "OTRO", "BAJA", "Consulta", "2026-11-04"));
+ejecutar("Registro 1", () -> gestor.registrarSolicitud(
+        1,
+        new DatosEstudiante("L001", "Ana Lopez", "ana@mail.com"),
+        "CONSTANCIA", "BAJA", "Constancia de alumno regular", "2026-11-03"
+));
+
+ejecutar("Registro 2", () -> gestor.registrarSolicitud(
+        2,
+        new DatosEstudiante("L002", "Juan Diaz", "juan@mail.com"),
+        "BECA", "ALTA", "Solicitud de beca", "2026-11-03"
+));
+
+ejecutar("Registro 3", () -> gestor.registrarSolicitud(
+        3,
+        new DatosEstudiante("L001", "Ana Lopez", "ana@mail.com"),
+        "EQUIVALENCIA", "MEDIA", "Equivalencia de materia", "2026-11-04"
+));
+
+ejecutar("Registro con email invalido", () -> gestor.registrarSolicitud(
+        4,
+        new DatosEstudiante("L003", "Pedro Ruiz", "pedro.mail.com"),
+        "OTRO", "BAJA", "Consulta", "2026-11-04"
+));
 
         ejecutar("Asignar", () -> gestor.asignarResponsable(2, "Carlos Perez"));
         ejecutar("Estado 2 -> EN_PROCESO", () -> gestor.cambiarEstado(2, "EN_PROCESO"));
