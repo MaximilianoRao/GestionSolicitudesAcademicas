@@ -20,6 +20,8 @@ public class PruebasEstadoRefactorizado {
         cp12Busquedas();
         cp13Reporte();
         cp14MismoEstudianteSeReutiliza();
+        cp15IdDuplicadoRechazado();
+        cp16DatosDeEstudianteNulosRechazados();        
 
         System.out.println("\nResultado: " + (total - fallidas) + "/" + total + " pruebas OK");
         if (fallidas > 0) {
@@ -145,6 +147,21 @@ public class PruebasEstadoRefactorizado {
         List<Solicitud> todas = gestor.listarSolicitudes();
         verificar("CP14", "Dos solicitudes del mismo legajo comparten el mismo estudiante",
                 todas.get(0).getEstudiante() == todas.get(1).getEstudiante());
+    }
+
+    private static void cp15IdDuplicadoRechazado() {
+        GestorSolicitudes gestor = gestorConSolicitud(1);
+        boolean rechazada = lanzaSolicitudException(() -> registrarBase(gestor, 1));
+        verificar("CP15", "Registrar un id que ya existe se rechaza y no duplica la solicitud",
+                rechazada && gestor.listarSolicitudes().size() == 1);
+    }
+
+    private static void cp16DatosDeEstudianteNulosRechazados() {
+        GestorSolicitudes gestor = nuevoGestor();
+        boolean rechazada = lanzaSolicitudException(() -> gestor.registrarSolicitud(1, null,
+                TipoSolicitud.BECA, PrioridadSolicitud.ALTA, "Beca", "2026-11-03"));
+        verificar("CP16", "Datos de estudiante nulos se rechazan con SolicitudException",
+                rechazada && gestor.listarSolicitudes().isEmpty());
     }
 
     // ---------- Apoyo (Arrange común) ----------

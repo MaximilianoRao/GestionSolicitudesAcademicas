@@ -21,6 +21,13 @@ public class GestorSolicitudes {
     public int registrarSolicitud(int id, DatosEstudiante datosEstudiante,
                                   TipoSolicitud tipo, PrioridadSolicitud prioridad,
                                   String descripcion, String fecha) {
+        if (datosEstudiante == null) {
+            throw new SolicitudException("Los datos del estudiante son obligatorios");
+        }
+
+        if (repositorio.buscarPorId(id).isPresent()) {
+            throw new SolicitudException("Ya existe una solicitud con id " + id);
+        }
         String legajo = datosEstudiante.getLegajo();
         String nombreEstudiante = datosEstudiante.getNombre();
         String email = datosEstudiante.getEmail();
