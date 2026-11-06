@@ -11,7 +11,7 @@ Módulo que permite registrar solicitudes de estudiantes (constancias, equivalen
 El repositorio contiene dos versiones del mismo sistema:
 
 - **Versión inicial** (`estado-inicial`): funciona, pero con problemas de diseño detectables a propósito.
-- **Versión refactorizada** (`estado-refactorizado`): mismo comportamiento externo, con mejor estructura interna.
+- **Versión refactorizada** (`estadorefactorizado`): mismo comportamiento externo, con mejor estructura interna.
 
 ## Funcionalidades
 
@@ -64,7 +64,7 @@ Cada caso informa `OK` o `FALLA` y al final se muestra el total de pruebas aprob
 - `etapa-refactoring`: refactorings aplicados.
 - `etapa-pruebas`: pruebas antes/después.
 - `etapa-docs`: documentación y code review.
-- `estado-refactorizado`: estado final del código.
+- `estadorefactorizado`: estado final del código.
 
 Para ver una versión: `git checkout <tag>`.
 
