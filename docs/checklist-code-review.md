@@ -50,7 +50,7 @@ Convención: &#9745; cumple · &#x26A0; observación (se detalla en la sección 
 
 ### H. Documentación y repositorio
 - &#9745; `docs/diagnostico-code-smells.md` documenta el diagnóstico.
-- &#x26A0; Verificar que existan `README.md` y las decisiones técnicas en `docs/` (OBS-09).
+- &#9745; Verificar que existan `README.md` y las decisiones técnicas en `docs/`.
 - &#x26A0; Verificar que el historial tenga commits atómicos (uno por refactoring) y que `bin/` no esté versionado.
 
 ---
@@ -104,13 +104,6 @@ Convención: &#9745; cumple · &#x26A0; observación (se detalla en la sección 
 - Hallazgo: el `for` sigue recorriendo después de encontrar al estudiante.
 - Feedback: cortar con `break` o extraer un método de búsqueda.
 - Estado: pendiente (mejora futura).
-
-
-**OBS-09 – Documentación del repositorio** (prioridad: Media)
-- Ubicación: raíz del repositorio y `docs/`.
-- Hallazgo: `README.md` genérico de VScode y bin/ en el repositorio.
-- Feedback: Actualizar `README.md` y sacar bin/ del repositorio.
-- Estado: se completa en la Etapa 8.
 
 ---
 
