@@ -138,7 +138,6 @@ if (repositorio.buscarPorId(id).isPresent()) {
 - &#9745; Manejo correcto de errores y excepciones.
 - &#x26A0; No genera deuda técnica innecesaria: quedan OBS-03 a OBS-08 registradas como mejoras futuras.
 - &#9745; Seguridad y buenas prácticas (datos sintéticos).
-- &#x26A0; Documentación: pendiente de verificar (OBS-09).
 - &#x26A0; Atomicidad: verificar un commit por cambio.
 
 **Veredicto:** aprobado con observaciones. Las observaciones de prioridad Alta están corregidas; las restantes quedan documentadas como mejoras futuras.
